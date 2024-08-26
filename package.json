@@ -8,6 +8,7 @@
   },
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.11.4",
     "@graphql-tools/schema": "^10.0.6",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.6.0",

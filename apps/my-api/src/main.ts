@@ -6,6 +6,7 @@ import cors from 'cors';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
+import { v4 as uuidv4 } from 'uuid';
 
 const pubsub = new PubSub();
 
@@ -19,6 +20,7 @@ const corsOptions = {
 // Define your schema
 const typeDefs = gql`
   type Book {
+    id: ID!
     title: String
     author: String
   }
@@ -29,37 +31,63 @@ const typeDefs = gql`
 
   type Mutation {
     addBook(title: String!, author: String!): Book
+    updateBook(id: ID!, title: String, author: String): Book
+    deleteBook(id: ID!): Book
   }
 
   type Subscription {
     bookAdded: Book
+    bookUpdated: Book
+    bookDeleted: Book
   }
 `;
 
-// Define your resolvers
+const books = [
+  { id: uuidv4(), title: 'The Catcher in the Rye', author: 'J.D. Salinger' },
+  { id: uuidv4(), title: 'To Kill a Mockingbird', author: 'Harper Lee' },
+];
+
 const resolvers = {
   Query: {
     books: () => books,
   },
   Mutation: {
     addBook: (_, { title, author }) => {
-      const newBook = { title, author };
+      const newBook = { id: uuidv4(), title, author };
       books.push(newBook);
       pubsub.publish('BOOK_ADDED', { bookAdded: newBook });
       return newBook;
     },
+    updateBook: (_, { id, title, author }) => {
+      const bookIndex = books.findIndex(book => book.id === id);
+      if (bookIndex === -1) throw new Error("Book not found");
+
+      const updatedBook = { ...books[bookIndex], title, author };
+      books[bookIndex] = updatedBook;
+      pubsub.publish('BOOK_UPDATED', { bookUpdated: updatedBook });
+      return updatedBook;
+    },
+    deleteBook: (_, { id }) => {
+      const bookIndex = books.findIndex(book => book.id === id);
+      if (bookIndex === -1) throw new Error("Book not found");
+
+      const [deletedBook] = books.splice(bookIndex, 1);
+      pubsub.publish('BOOK_DELETED', { bookDeleted: deletedBook });
+      return deletedBook;
+    }
   },
   Subscription: {
     bookAdded: {
       subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']),
     },
-  },
+    bookUpdated: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_UPDATED']),
+    },
+    bookDeleted: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_DELETED']),
+    },
+  }
 };
-
-const books = [
-  { title: 'The Catcher in the Rye', author: 'J.D. Salinger' },
-  { title: 'To Kill a Mockingbird', author: 'Harper Lee' },
-];
 
 async function startServer() {
   const app = express();
