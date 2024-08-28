@@ -1,3 +1,12 @@
+/* eslint-disable no-irregular-whitespace */
+// In our main.ts file, we define the GraphQL schema and resolvers.
+// The schema includes a Book type, a Query to fetch books, a Mutation to add a new book,
+// and a Subscription to notify clients when a new book is added.
+// We then integrate Apollo Server with Express and start the server, making our GraphQL API
+// accessible at http://localhost:4000/graphql
+// With this setup, the server can handle both GraphQL queries and real-time subscriptions,
+// accessible via the /graphql endpoint.
+
 import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 import http from 'http';
@@ -10,14 +19,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const pubsub = new PubSub();
 
-const corsOptions = {
-  origin: 'https://studio.apollographql.com',
-  methods: ['POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
-
-// Define your schema
 const typeDefs = gql`
   type Book {
     id: ID!
@@ -43,8 +44,8 @@ const typeDefs = gql`
 `;
 
 const books = [
-  { id: uuidv4(), title: 'The Catcher in the Rye', author: 'J.D. Salinger' },
-  { id: uuidv4(), title: 'To Kill a Mockingbird', author: 'Harper Lee' },
+  { id: uuidv4(), title: 'The Great Gatsby', author: 'F. Scott Fitzgerald' },
+  { id: uuidv4(), title: '1984', author: 'George Orwell' },
 ];
 
 const resolvers = {
@@ -91,6 +92,15 @@ const resolvers = {
 
 async function startServer() {
   const app = express();
+
+  // Update CORS options to allow requests from your frontend
+  const corsOptions = {
+    origin: ['http://localhost:4200', 'https://studio.apollographql.com'], // Allow multiple origins
+    methods: ['POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  };
+
   app.use(cors(corsOptions));
 
   const httpServer = http.createServer(app);
@@ -110,10 +120,6 @@ async function startServer() {
 
   await server.start();
   server.applyMiddleware({ app });
-
-  app.get('/', (req, res) => {
-    res.send('Welcome to the GraphQL API');
-  });
 
   httpServer.listen({ port: 4000 }, () => {
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
