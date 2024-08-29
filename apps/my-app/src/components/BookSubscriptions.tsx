@@ -36,22 +36,22 @@ function BookSubscriptions() {
   const { data: deletedData } = useSubscription(BOOK_DELETED);
 
   return (
-    <div>
-      <h2>Real-Time Updates</h2>
+    <div className="mt-8">
+      <h2 className="text-xl font-bold mb-2">Real-Time Updates</h2>
       {addedData && (
-        <p>
+        <p className="text-green-500">
           New Book Added: {addedData.bookAdded.title} by{' '}
           {addedData.bookAdded.author}
         </p>
       )}
       {updatedData && (
-        <p>
+        <p className="text-yellow-500">
           Book Updated: {updatedData.bookUpdated.title} by{' '}
           {updatedData.bookUpdated.author}
         </p>
       )}
       {deletedData && (
-        <p>
+        <p className="text-red-500">
           Book Deleted: {deletedData.bookDeleted.title} by{' '}
           {deletedData.bookDeleted.author}
         </p>

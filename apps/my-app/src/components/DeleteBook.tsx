@@ -18,22 +18,26 @@ function DeleteBook() {
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     deleteBook({ variables: { id } });
+    setId('');
   };
 
   return (
-    <div>
-      <h2>Delete Book</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="mb-6">
+      <h2 className="text-xl font-bold mb-2">Delete Book</h2>
+      <form onSubmit={handleSubmit} className="space-y-2">
         <input
           type="text"
           placeholder="Book ID"
           value={id}
           onChange={(e) => setId(e.target.value)}
+          className="border p-2 w-full"
         />
-        <button type="submit">Delete Book</button>
+        <button type="submit" className="bg-red-500 text-white p-2 rounded">
+          Delete Book
+        </button>
       </form>
       {data && (
-        <p>
+        <p className="mt-4 text-green-500">
           Deleted: {data.deleteBook.title} by {data.deleteBook.author}
         </p>
       )}

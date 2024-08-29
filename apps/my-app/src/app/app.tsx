@@ -9,19 +9,14 @@ import BookSubscriptions from '../components/BookSubscriptions';
 function App() {
   return (
     <ApolloProvider client={client}>
-      <h1>
-        <strong>GraphQL Book Management</strong>
-      </h1>
-      <br />
-      <BookList />
-      <br />
-      <AddBook />
-      <br />
-      <UpdateBook />
-      <br />
-      <DeleteBook />
-      <br />
-      <BookSubscriptions />
+      <div className="App p-4 max-w-3xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">GraphQL Book Management</h1>
+        <AddBook />
+        <UpdateBook />
+        <DeleteBook />
+        <BookList />
+        <BookSubscriptions />
+      </div>
     </ApolloProvider>
   );
 }
