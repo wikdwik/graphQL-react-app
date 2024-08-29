@@ -23,13 +23,16 @@ function BookList() {
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
-    <ul className="list-disc pl-5">
-      {data.books.map((book: Book) => (
-        <li key={book.id} id={book.id} className="my-2">
-          <span className="font-semibold">{book.title}</span> by {book.author}
-        </li>
-      ))}
-    </ul>
+    <>
+      <h2 className="text-2xl font-bold mb-4">Available Books</h2>
+      <ul className="list-disc pl-5">
+        {data.books.map((book: Book) => (
+          <li key={book.id} id={book.id} className="my-2">
+            <span className="font-semibold">{book.title}</span> by {book.author}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
