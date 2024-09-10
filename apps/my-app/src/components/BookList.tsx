@@ -1,5 +1,5 @@
-import { useQuery, gql } from '@apollo/client';
-import { useState } from 'react';
+import { useQuery, gql, useSubscription } from '@apollo/client';
+import { useEffect, useState } from 'react';
 
 type Book = {
   id: string;
@@ -17,9 +17,27 @@ const GET_BOOKS = gql`
   }
 `;
 
+// const BOOK_ADDED_SUBSCRIPTION = gql`
+//   subscription OnBookAdded {
+//     bookAdded {
+//       id
+//       title
+//       author
+//     }
+//   }
+// `;
+
 function BookList() {
   const { loading, error, data, refetch } = useQuery(GET_BOOKS);
   const [isBooksFetched, setIsBooksFetched] = useState(false);
+
+  // const { data: bookAdded } = useSubscription(BOOK_ADDED_SUBSCRIPTION);
+
+  // useEffect(() => {
+  //   if (bookAdded) {
+  //     refetch();
+  //   }
+  // }, [bookAdded, refetch]);
 
   const handleGetBooks = async () => {
     // Refetch the books and update the state
